@@ -1,0 +1,47 @@
+name: Gemini VirtualBox image
+on:
+  push:
+    paths:
+      - 'Gemini-VM/**'
+      - '.github/workflows/gemini-vm.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  image:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Debian guest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debootstrap parted qemu-utils qemu-system-x86 ovmf python3-pil
+          gh release download v26.11.9 -R XTLS/Xray-core -p Xray-linux-64.zip
+          unzip -q Xray-linux-64.zip xray
+          sudo bash Gemini-VM/build.sh
+          mkdir output
+          qemu-img convert -f raw -O vdi gemini.raw output/Gemini-VM-amd64.vdi
+      - name: Capture actual boot screen
+        run: |
+          sudo chmod a+rw gemini.raw
+          qemu-system-x86_64 -daemonize -m 3072 -smp 2 -display none -monitor unix:/tmp/gemini-monitor,server,nowait -drive file=gemini.raw,format=raw,snapshot=on -nic user,model=e1000
+          python3 Gemini-VM/screenshot.py
+          cp Gemini-VM/README.md output/README.md
+          (cd output && zip -q -6 ../Gemini-VM-VirtualBox-amd64.zip Gemini-VM-amd64.vdi README.md)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gemini-VM-VirtualBox-amd64
+          path: |
+            Gemini-VM-VirtualBox-amd64.zip
+            output/kiosk.png
+          if-no-files-found: error
+      - name: Publish VM and screenshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="gemini-vm-${GITHUB_SHA::12}"
+          gh release create "$tag" Gemini-VM-VirtualBox-amd64.zip output/kiosk.png --target "$GITHUB_SHA" --title "Gemini VM for VirtualBox ($tag)" --notes-file Gemini-VM/README.md

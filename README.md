@@ -29,4 +29,4 @@
 
 ## Образ VirtualBox
 
-[План минимальной ВМ и схема обмена файлами с Windows](Gemini-VM/README.md). Готового OVA пока нет; ZIP из Releases не предназначен для импорта в VirtualBox.
+[Инструкция по запуску Gemini VM и обмену файлами с Windows](Gemini-VM/README.md). Готовые VDI и снимки загрузки публикуются в [Releases](https://github.com/Alchimon/HELPER/releases) отдельно от Windows portable. Для образа не нужен установочный ISO: создайте ВМ на основе существующего VDI.

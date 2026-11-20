@@ -1,0 +1,15 @@
+[Unit]
+After=systemd-user-sessions.service NetworkManager.service
+Conflicts=getty@tty1.service
+After=getty@tty1.service
+[Service]
+PAMName=login
+User=gemini
+WorkingDirectory=/home/gemini
+TTYPath=/dev/tty1
+StandardInput=tty
+Environment=HOME=/home/gemini
+ExecStart=/usr/bin/startx /usr/local/bin/gemini-session -- :0 vt1 -keeptty -nolisten tcp
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
