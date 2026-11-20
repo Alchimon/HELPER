@@ -30,3 +30,9 @@
 ## Образ VirtualBox
 
 [Инструкция по запуску Gemini VM и обмену файлами с Windows](Gemini-VM/README.md). Готовые VDI и снимки загрузки публикуются в [Releases](https://github.com/Alchimon/HELPER/releases) отдельно от Windows portable. Для образа не нужен установочный ISO: создайте ВМ на основе существующего VDI.
+
+**Готовый образ:** [Gemini VM для VirtualBox, ZIP (1,18 ГБ)](https://github.com/Alchimon/HELPER/releases/download/gemini-vm-6b2c3539218e/Gemini-VM-VirtualBox-amd64.zip) · [страница релиза](https://github.com/Alchimon/HELPER/releases/tag/gemini-vm-6b2c3539218e).
+
+![Меню Gemini VM после загрузки образа в QEMU на GitHub Actions](https://github.com/Alchimon/HELPER/releases/download/gemini-vm-6b2c3539218e/kiosk.png)
+
+В CI проверена загрузка до меню с автоматическим снимком экрана. Подключение с вашей подпиской и обмен через общую папку на целевом VirtualBox требуют проверки на месте.
