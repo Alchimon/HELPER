@@ -26,3 +26,7 @@
 | [`.github/workflows/gemini-portable.yml`](.github/workflows/gemini-portable.yml) | Сборка `Gemini.exe` на Windows и упаковка с закреплёнными версиями Chromium и Xray. |
 
 Исполняемые файлы и ZIP не хранятся в истории Git. ZIP публикуется отдельно, а сборки по коммитам доступны в Actions. Обычная сборка не требует ссылки подписки. Для публикации релиза запустите workflow вручную на ветке проекта и укажите новый тег релиза.
+
+## Образ VirtualBox
+
+[План минимальной ВМ и схема обмена файлами с Windows](Gemini-VM/README.md). Готового OVA пока нет; ZIP из Releases не предназначен для импорта в VirtualBox.
