@@ -28,7 +28,7 @@ jobs:
       - name: Capture actual boot screen
         run: |
           sudo chmod a+rw gemini.raw
-          qemu-system-x86_64 -daemonize -m 3072 -smp 2 -display none -monitor unix:/tmp/gemini-monitor,server,nowait -drive file=gemini.raw,format=raw,snapshot=on -nic user,model=e1000
+          qemu-system-x86_64 -daemonize -m 3072 -smp 2 -display none -serial file:/tmp/gemini-serial -monitor unix:/tmp/gemini-monitor,server,nowait -drive file=gemini.raw,format=raw,snapshot=on -nic user,model=e1000
           python3 Gemini-VM/screenshot.py
           cp Gemini-VM/README.md output/README.md
           (cd output && zip -q -6 ../Gemini-VM-VirtualBox-amd64.zip Gemini-VM-amd64.vdi README.md)

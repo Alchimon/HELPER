@@ -26,9 +26,9 @@ printf 'gemini-vm\n' > "$root/etc/hostname"
 printf '#!/bin/sh\nexit 101\n' > "$root/usr/sbin/policy-rc.d"
 chmod +x "$root/usr/sbin/policy-rc.d"
 chroot "$root" apt-get update
-chroot "$root" apt-get install -y --no-install-recommends linux-image-amd64 grub-pc xserver-xorg xserver-xorg-legacy xinit xauth openbox chromium zenity thunar dbus-x11 libpam-systemd network-manager ca-certificates python3 fonts-dejavu gvfs policykit-1
+chroot "$root" apt-get install -y --no-install-recommends linux-image-amd64 grub-pc xserver-xorg xserver-xorg-legacy xinit xauth openbox chromium zenity thunar dbus-x11 libpam-systemd network-manager ca-certificates python3 fonts-dejavu gvfs polkitd xdotool mousepad
 printf 'allowed_users=anybody\nneeds_root_rights=yes\n' > "$root/etc/X11/Xwrapper.config"
-chroot "$root" useradd -m -s /bin/bash gemini
+chroot "$root" useradd -m -G dialout -s /bin/bash gemini
 chroot "$root" passwd -l gemini
 install -d -o 1000 -g 1000 "$root/home/gemini/Downloads"
 install -m 0755 "$src/files/kiosk.py" "$root/usr/local/bin/gemini-kiosk"
@@ -44,13 +44,12 @@ mkdir -p "$root/etc/NetworkManager/system-connections"
 cat > "$root/etc/NetworkManager/system-connections/nat.nmconnection" <<'NET'
 [connection]
 id=Virtual Ethernet
- type=ethernet
+type=ethernet
 [ipv4]
 method=auto
 [ipv6]
 method=auto
 NET
-sed -i 's/^ type/type/' "$root/etc/NetworkManager/system-connections/nat.nmconnection"
 chmod 600 "$root/etc/NetworkManager/system-connections/nat.nmconnection"
 mkdir -p "$root/etc/polkit-1/rules.d"
 cat > "$root/etc/polkit-1/rules.d/49-gemini.rules" <<'RULE'

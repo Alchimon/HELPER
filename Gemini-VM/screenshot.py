@@ -10,15 +10,15 @@ def monitor(command):
         client.sendall((command + '\n').encode())
         time.sleep(.3)
 
-for _ in range(30):
-    time.sleep(4)
-    monitor('screendump /tmp/gemini-screen.ppm')
-    path = Path('/tmp/gemini-screen.ppm')
-    if path.exists():
-        with Image.open(path) as screenshot:
-            screenshot.save('output/kiosk.png')
-        if screenshot.width >= 800 and screenshot.height >= 600:
-            break
+serial = Path('/tmp/gemini-serial')
+for _ in range(60):
+    if serial.exists() and b'GEMINI_KIOSK_READY' in serial.read_bytes():
+        break
+    time.sleep(3)
 else:
-    raise SystemExit('Guest did not reach graphical resolution')
+    raise SystemExit('Guest did not display the Gemini kiosk window')
+time.sleep(2)
+monitor('screendump /tmp/gemini-screen.ppm')
+with Image.open('/tmp/gemini-screen.ppm') as screenshot:
+    screenshot.save('output/kiosk.png')
 monitor('quit')

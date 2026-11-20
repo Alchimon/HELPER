@@ -64,7 +64,13 @@ def start():
             return
         if action == 'Files / Gemini-Exchange':
             share = Path('/media/sf_Gemini-Exchange')
-            subprocess.run(['thunar', str(share if share.is_dir() else Path.home() / 'Downloads')], check=False)
+            downloads = Path.home() / 'Downloads'
+            try:
+                next(share.iterdir(), None)  # trigger kernel automount
+                subprocess.Popen(['thunar', str(share)])
+            except OSError:
+                pass
+            subprocess.Popen(['thunar', str(downloads)])
             continue
         if action == 'Set subscription' or not PROFILE.exists():
             secret = subprocess.run(['zenity', '--password', '--title=Paste HTTPS subscription'], text=True, capture_output=True)
