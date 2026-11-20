@@ -1,5 +1,12 @@
 name: Gemini Portable Windows x64
-on: [push, workflow_dispatch]
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'New release tag; leave empty to build only'
+        required: false
+        type: string
 permissions:
   contents: read
 jobs:
@@ -37,3 +44,25 @@ jobs:
           name: Gemini-Portable-Win10-x64
           path: bundle/
           if-no-files-found: error
+  release:
+    if: github.event_name == 'workflow_dispatch' && inputs.release_tag != ''
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Gemini-Portable-Win10-x64
+          path: bundle
+      - name: Publish portable ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          [[ "$TAG" =~ ^gemini-portable-v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          (cd bundle && zip -qr ../Gemini-Portable-Win10-x64.zip .)
+          unzip -tq Gemini-Portable-Win10-x64.zip
+          gh release create "$TAG" Gemini-Portable-Win10-x64.zip --repo "$REPO" --target "$SHA" --title "Gemini Portable $TAG" --notes 'Windows 10 x64. Extract the entire archive and launch Gemini.exe. Chromium and Xray are included. No installation required. See README.md for subscription compatibility.'
