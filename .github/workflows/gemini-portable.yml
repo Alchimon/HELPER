@@ -25,7 +25,7 @@ jobs:
             if (!$chrome -or !(Test-Path bundle/Core/xray.exe)) { throw 'Missing bundled executables' }
             Copy-Item $chrome.Directory.FullName bundle/Browser -Recurse
             $framework = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319"
-            & "$framework\csc.exe" /nologo /target:winexe /platform:x64 /out:bundle/Gemini.exe /r:System.Windows.Forms.dll /r:System.Web.dll /r:System.Web.Extensions.dll /r:Microsoft.VisualBasic.dll Gemini-Portable/Gemini.cs 2>&1 | Tee-Object -Variable compiler
+            & "$framework\csc.exe" /nologo /target:winexe /platform:x64 /out:bundle\Gemini.exe /r:System.Windows.Forms.dll /r:System.Web.dll /r:System.Web.Extensions.dll /r:Microsoft.VisualBasic.dll .\Gemini-Portable\Gemini.cs 2>&1 | Tee-Object -Variable compiler
             if ($LASTEXITCODE -or !(Test-Path bundle/Gemini.exe)) { throw "Compilation failed: $compiler" }
             Copy-Item Gemini-Portable/README.md bundle/README.md
           } catch {
